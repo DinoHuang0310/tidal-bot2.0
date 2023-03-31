@@ -61,7 +61,7 @@ function handleEvent(event) {
       const searchTime = split[1];
       
       console.log(split)
-      echo = getTidalByText(searchKeyword, searchTime);
+      echo = getTidalByText(searchKeyword, searchTime || '今天');
 
     }
 
