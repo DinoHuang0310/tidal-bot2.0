@@ -1,5 +1,33 @@
 const moment = require('moment');
 
+const createOption = ({ action, dataArr, keyword = '', time = '' }) => {
+  if (!action) {
+    console.error('createOption action is required');
+    return [];
+  }
+  dataString = (element) => {
+    switch (action) {
+      case 'add':
+        return `action=add&stationId=${element.stationId}`;
+      case 'search':
+        return `action=search&stationId=${element.stationId}&time=${time}&keyword=${keyword}`;
+      case 'delete':
+        return `action=delete&stationId=${element.stationId}`;
+    }
+  }
+  
+  return dataArr.map((item) => {
+    return {
+      type: 'button',
+      action: {
+        type: "postback",
+        label: item.locationName,
+        data: dataString(item)
+      }
+    }
+  })
+}
+
 const replyModel = {
   info: {
     type: 'text',
@@ -65,21 +93,23 @@ const replyModel = {
     }
   },
 
-  resultsMultiple: function(options) {
+  resultsMultiple: (options) => {
+    const { title } = options;
+
     return {
       type: 'flex',
-      altText: '你484要查:',
+      altText: title,
       contents: {
         type: 'bubble',
         body: {
           type: 'box',
           layout: 'vertical',
-          contents: [{ type: 'text', text: '你484要查:' }]
+          contents: [{ type: 'text', text: title }]
         },
         footer: {
           type: 'box',
           layout: 'vertical',
-          contents: this.createOption({ action: 'search', ...options })
+          contents: createOption(options)
         },
         styles: {
           footer: { separator: true }
@@ -88,39 +118,25 @@ const replyModel = {
     }
   },
 
-  createOption: ({ action, dataArr, location = '', time = '' }) => {
-    if (!action) {
-      console.error('createOption action is required');
-      return [];
-    }
-    dataString = (element) => {
-      switch (action) {
-        // case 'addFavorite':
-        //   return `action=add&user=${user}&location=${element.locationName}`;
-        case 'search':
-          // return `action=search&message=${element.locationName || element}/${time ? time : '今天'}/${originalLocation || ''}`;
-          return `action=search&stationId=${element.stationId}&time=${time}&keyword${location}`;
-        // case 'deleteFavorite':
-        //   return `action=delete&user=${user}&location=${element}`;
-      }
-    }
-    
-    return dataArr.map((item) => {
-      return {
-        type: 'button',
-        action: {
-          type: "postback",
-          label: item.locationName,
-          data: dataString(item)
-        }
-      }
-    })
-  },
-
   locationWeather: (location) => {
     return {
       type: 'text',
       text: `你可能需要來點氣象?\nhttps://www.google.com/search?q=${location}氣象&rlz=1C1CHBD_zh-twTW888TW888&oq=${location}`
+    }
+  },
+
+  // database reply
+  httpSuccess: (action) => {
+    return {
+      type: 'text',
+      text: `${action}成功!`
+    }
+  },
+
+  httpError: (action) => {
+    return {
+      type: 'text',
+      text: `${action}失敗!`
     }
   },
 

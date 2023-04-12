@@ -1,20 +1,20 @@
 const useTidal = require('../modules/useTidal');
-const replyModel = require('../modules/replyModel');
+const replyModel = require('../modules/replyModels');
 
 // location = user填入的地點
 // time = 今天、明天、後天或空字串
 
 const replyMessage = {
 
-  getTidalByText: (location, time = '今天') => {
+  getTidalByText: (keyword, time = '今天') => {
     if (['今天', '明天', '後天'].some(i => i === time)) {
       // 符合潮汐規則, 帶入查詢
-      const target = useTidal.filterByLocation(location);
+      const target = useTidal.filterByLocation(keyword);
 
       if (target.length === 1) {
         return [
           replyModel.resultsSingle(target[0], time),
-          replyModel.locationWeather(location)
+          replyModel.locationWeather(keyword)
         ]
 
       } else if (target.length < 1) {
@@ -24,8 +24,10 @@ const replyMessage = {
       } else if (target.length < 6) {
         // 多筆查詢結果, 創建flex button
         return replyModel.resultsMultiple({
+          title: '你484要查:',
+          action: 'search',
           dataArr: target,
-          location,
+          keyword,
           time
         });
 
@@ -48,9 +50,11 @@ const replyMessage = {
 
     const target = useTidal.findByStationId(stationId);
 
-    return [
+    return keyword ? [
       replyModel.resultsSingle(target, time),
       replyModel.locationWeather(keyword)
+    ] : [
+      replyModel.resultsSingle(target, time),
     ]
   },
 
