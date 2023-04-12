@@ -6,5 +6,10 @@ module.exports = {
 
   // opendata
   authorization: '',
+  
+  // mongo db
+  mongoUri: '',
+  dbName: '',
+  collections: '',
 
 }
