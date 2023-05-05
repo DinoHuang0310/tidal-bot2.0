@@ -3,22 +3,22 @@ const useTidal = {
 
   setTidalData: function(newData) {
     const validTimeFormatter = (data) => {
-      const { startTime, weatherElement } = data;
+      const { Date: date, TideRange: tidalRange, Time } = data;
       return {
-        date: startTime, // 日期
-        tidalRange: weatherElement[0].elementValue, // 潮差
-        tidalTime: weatherElement[1].time.map((i) => {
-          return { time: i.dataTime, tidalType: i.parameter[0].parameterValue }
+        date, // 日期
+        tidalRange, // 潮差
+        tidalTime: Time.map((i) => {
+          return { time: i.DateTime, tidalType: i.Tide }
         }),
       }
     }
 
     this.tidalData = newData.reduce((prevValue, currentValue) => {
-      const { locationName, stationId, validTime } = currentValue;
+      const { LocationName: locationName, LocationId: stationId, TimePeriods } = currentValue.Location;
       return prevValue.concat({
         locationName,
         stationId,
-        validTime: validTime.map((item) => validTimeFormatter(item))
+        validTime: TimePeriods.Daily.map((item) => validTimeFormatter(item))
       })
     }, []);
   },

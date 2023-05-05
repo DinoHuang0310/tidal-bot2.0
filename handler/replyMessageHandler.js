@@ -1,9 +1,6 @@
 const useTidal = require('../modules/useTidal');
 const replyModel = require('../modules/replyModels');
 
-// location = user填入的地點
-// time = 今天、明天、後天或空字串
-
 const replyMessage = {
 
   getTidalByText: (keyword, time = '今天') => {

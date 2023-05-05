@@ -47,8 +47,8 @@ function getTidalData() {
 
   getJSON(GET_TIDAL_BY_DATE(fromDate, toDate)).then((response) => {
     try {
-      const { location } = response.records;
-      useTidal.setTidalData(location);
+      const { TideForecasts } = response.records;
+      useTidal.setTidalData(TideForecasts);
       console.log(`getTidalData OK - ${moment().format('MMMM Do YYYY, h:mm a')}`);
     } catch (err) {
       console.warn('set tidal err', err, response);
