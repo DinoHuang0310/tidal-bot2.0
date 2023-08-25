@@ -83,7 +83,8 @@ const replyModel = {
 
     const echoTidal = (tidalArry) => {
       return tidalArry.reduce((prev, current) => {
-        return prev += `\n  ${current.tidalType}: ${current.time}`;
+        const split = current.time.split('T');
+        return prev += `\n  ${current.tidalType}: ${split[0]} ${split[1].substring(0, 8)}`;
       }, '');
     }
 
