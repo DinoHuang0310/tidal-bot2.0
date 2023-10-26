@@ -1,15 +1,13 @@
 'use strict';
 
 const express = require('express');
-const getJSON = require('get-json');
+const axios = require('axios');
 const moment = require('moment');
 
 const router = require('./router');
 const { GET_TIDAL_BY_DATE } = require('./api');
 const useTidal = require('./modules/useTidal');
 const connector = require('./db/connector');
-
-getTidalData();
 
 // create Express app
 // about Express itself: https://expressjs.com/
@@ -41,29 +39,23 @@ app.use('/', router);
 // getTidalData
 const timeout = 25 * 60 * 1000;
 
-function getTidalData() {
+const getTidalData = async () => {
   const fromDate = moment().format('YYYY-MM-DD');
   const toDate = moment().add(3, 'days').format('YYYY-MM-DD');
-  const target = GET_TIDAL_BY_DATE(fromDate, toDate);
 
-  getJSON(target).then((response) => {
-    try {
-      const { TideForecasts } = response.records;
-      useTidal.setTidalData(TideForecasts);
-      console.log(`getTidalData OK - ${moment().format('MMMM Do YYYY, h:mm a')}`);
-    } catch (err) {
-      console.warn('set tidal err', err, response);
-    }
+  try {
+    const response = await axios.get(GET_TIDAL_BY_DATE(fromDate, toDate));
 
-    setTimeout(() => {
-      getTidalData();
-    }, timeout);
+    const { TideForecasts } = response.data.records;
+    useTidal.setTidalData(TideForecasts);
+    console.log(`getTidalData OK - ${moment().format('MMMM Do YYYY, h:mm a')}`);
 
-  }).catch((error) => {
-    console.log(target)
-    console.error('get tidal err', error);
-  });
+  } catch (error) {
+    console.error('get tidal err:', error);
+  }
 }
+
+getTidalData();
 
 // listen on port
 const server = app.listen(process.env.PORT || 8080, function() {

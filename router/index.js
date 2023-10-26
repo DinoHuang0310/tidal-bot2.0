@@ -15,7 +15,7 @@ const lineConfig = {
 
 // register a webhook handler with middleware
 // about the middleware, please refer to doc
-router.post('/line', line.middleware(lineConfig), (req, res) => {
+router.post('/', line.middleware(lineConfig), (req, res) => {
   Promise.all(req.body.events.map(handleEvent)).then((result) => {
     return res.json(result);
   }).catch((err) => {
