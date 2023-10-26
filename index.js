@@ -44,8 +44,9 @@ const timeout = 25 * 60 * 1000;
 function getTidalData() {
   const fromDate = moment().format('YYYY-MM-DD');
   const toDate = moment().add(3, 'days').format('YYYY-MM-DD');
+  const target = GET_TIDAL_BY_DATE(fromDate, toDate);
 
-  getJSON(GET_TIDAL_BY_DATE(fromDate, toDate)).then((response) => {
+  getJSON(target).then((response) => {
     try {
       const { TideForecasts } = response.records;
       useTidal.setTidalData(TideForecasts);
@@ -59,6 +60,7 @@ function getTidalData() {
     }, timeout);
 
   }).catch((error) => {
+    console.log(target)
     console.error('get tidal err', error);
   });
 }
