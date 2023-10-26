@@ -60,4 +60,5 @@ getTidalData();
 // listen on port
 const server = app.listen(process.env.PORT || 8080, function() {
   console.log('哩公蝦毀的port ->', server.address().port);
+  console.log(server.address())
 });
