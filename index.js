@@ -44,7 +44,13 @@ const getTidalData = async () => {
   const toDate = moment().add(3, 'days').format('YYYY-MM-DD');
 
   try {
-    const response = await axios.get(GET_TIDAL_BY_DATE(fromDate, toDate));
+    const response = await axios.get(GET_TIDAL_BY_DATE(fromDate, toDate), {
+      proxy: {
+        protocol: 'https',
+        host: 'tidal-bot2-0.onrender.com',
+        port: 10000,
+      },
+    });
 
     const { TideForecasts } = response.data.records;
     useTidal.setTidalData(TideForecasts);
@@ -53,6 +59,10 @@ const getTidalData = async () => {
   } catch (error) {
     console.error('get tidal err:', error);
   }
+
+  setTimeout(() => {
+    getTidalData();
+  }, timeout);
 }
 
 getTidalData();
@@ -60,5 +70,5 @@ getTidalData();
 // listen on port
 const server = app.listen(process.env.PORT || 8080, function() {
   console.log('哩公蝦毀的port ->', server.address().port);
-  console.log(server.address())
+  console.log(server)
 });
